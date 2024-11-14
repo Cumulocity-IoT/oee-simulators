@@ -25,6 +25,8 @@ class OeeAPI:
     SHIFTPLAN_REST_ENDPOINT = f'{OEE_BASEURL}/mes/shiftplan'
     c8y_api = CumulocityAPI()
 
+    oee_bundle_not_found = False
+
     templates = {}
 
     def new_profile(self, external_id):
@@ -163,7 +165,12 @@ class OeeAPI:
         if response.ok:
             log.info(f'Timeslot {timeslot.get("id")} for {locationId} was created')
             return True
-        log.warning(f'Cannot create Timeslot {timeslot.get("id")} for location:{locationId}, content: {response.status_code} - {response.text}, url: {url}, data: {json.dumps(timeslot)}')
+        log.warning(f'Cannot create Timeslot {timeslot.get("id")} for location: {locationId}, content: {response.status_code} - {response.text}, url: {url}, data: {json.dumps(timeslot)}')
+        if response.status_code == 404:
+            log.error('The microservice oee-bundle was not found, please check if it is subscribed in your tenant. '
+                      'Communication with the oee-bundle will be disabled and therefore some functionality (e.g. '
+                      f'Shiftplans) for the location {locationId} will not be available.')
+            self.oee_bundle_not_found = True
         return False
 
     def delete_timeslots_for_shiftplan(self, shiftplan):
@@ -193,6 +200,9 @@ class OeeAPI:
         return {'locationId':locationId,'timeslots':{}}
 
     def get_shiftplan_status(self, locationId):
+        if self.oee_bundle_not_found:
+            return None
+
         url = f'{self.SHIFTPLAN_REST_ENDPOINT}/{locationId}/status'
         response = requests.get(url, headers=C8Y_HEADERS)
         if response.ok:
