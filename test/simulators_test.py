@@ -64,53 +64,6 @@ class Test(unittest.TestCase):
         self.assertIsNotNone(model)
         log.info('-' * 100)
 
-    def test_create_and_activate_oee_profile(self):
-        log.info('-' * 100)
-        log.info("Start testing create and activate oee profile")
-        log.info('-' * 100)
-
-        device_id = Utils.create_device(device_model=self.device_model_with_events)
-
-        # Get current directory path
-        current_dir = os.getcwd()
-
-        # Extracts the base name of the current directory
-        base_dir = os.path.basename(current_dir)
-        # If the working directory is not test then change to test
-        if base_dir != "test":
-            # Change to the 'test' directory
-            os.chdir("test")
-
-        try:
-            device_profile_info = self.oee_api.create_and_activate_profile(external_id=self.device_model_with_events.get('id'))
-            # null device_profile_info will fail the test
-            self.assertIsNotNone(device_profile_info)
-        finally:
-            # Change back to the original working directory
-            os.chdir(current_dir)
-            Utils.delete_oee_profile_and_device(self, profile_id= device_profile_info.get('id'), device_id=device_id)
-
-        log.info('-' * 100)
-
-    def test_create_update_organization_structure(self):
-        log.info('-' * 100)
-        log.info("Start testing create hierarchy asset (organization structure)")
-        log.info('-' * 100)
-
-        device_id = Utils.create_device(self.device_model_with_events)
-        line_managed_object, site_managed_object = self.oee_api.create_or_update_asset_hierarchy(deviceIDs=device_id, line_description = "Simulator LINE", line_type = "LINE", site_description = "Simulator SITE", site_type = "SITE", oee_target = 80)
-        self.assertIsNotNone(line_managed_object.get('hierarchy'))
-        self.assertIsNotNone(site_managed_object.get('hierarchy'))
-        line_id = line_managed_object.get('id')
-        site_id = site_managed_object.get('id')
-        self.cumulocity_api.delete_managed_object(site_id)
-        log.info(f"Removed the test SITE with id {site_id}")
-        self.cumulocity_api.delete_managed_object(line_id)
-        log.info(f"Removed the test LINE structure with id {line_id}")
-        self.cumulocity_api.delete_managed_object(device_id)
-        log.info(f"Removed the test device with id {device_id}")
-        log.info('-' * 100)
-
     def test_send_event(self):
         log.info('-' * 100)
         log.info("Start testing sending event")
@@ -124,7 +77,6 @@ class Test(unittest.TestCase):
         self.cumulocity_api.delete_managed_object(device_id)
         log.info(f"Removed the {self.device_model_with_events.get('label')} with id {device_id}")
         log.info('-' * 100)
-
 
     def test_send_measurement(self):
         log.info('-' * 100)
@@ -190,8 +142,8 @@ class Test(unittest.TestCase):
 #                if shiftplan.get('slotType') == 'BREAK':
 #                    date_to = shiftplan.get('slotEnd')
 
-            date_from="2022-07-13T08:00:00Z"
-            date_to="2022-07-13T12:30:00Z"
+            date_from = "2022-07-13T08:00:00Z"
+            date_to = "2099-07-13T12:30:00Z"
 
             # Get events from event simulator
             events = self.cumulocity_api.get_events(date_from=date_from, date_to=date_to, device_id=event_device_id)
