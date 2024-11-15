@@ -1,4 +1,5 @@
 import json, subprocess, sys, time, unittest, logging, os
+import config.root # Configure root directories
 
 from datetime import datetime
 from simulators.main.simulator import get_or_create_device_id, load
