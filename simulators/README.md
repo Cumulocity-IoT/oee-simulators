@@ -2,7 +2,6 @@
 
 OEE-simulators offers these main features in [main](main): 
 - the **oee-simulators microservice** which creates devices and sends data into Cumulocity.
-- the **profile generator** to create/delete OEE calculation profiles from the command line.
 
 There are extra features in [extras](extras):
 - the **export profile data** to export Measurements or/and Alarms from OEE profiles into json data files.
@@ -133,15 +132,6 @@ zip oee-simulators.zip image.tar cumulocity.json
 ```
 This zip file can then be uploaded as a Microservice to Cumulocity IoT.
 
-### Creating profiles automatically
-
-The creation of profiles can be configured using the Tenant Options on the given Cumulocity tenant. See the [Cumulocity REST API](https://cumulocity.com/api/10.14.0/#tag/Options) documentation for details. The Tenant Options must use the category: "simulators"
-
-Some Options can be configured:
-- LOG_LEVEL - sets the used logging-level of the simulator. Choose between INFO and DEBUG. DEBUG does give a more detailed output of the Simulator's configuration and decisions. Default: 'INFO'
-
-Note: A profile will be created and activated only if no other profiles are already defined for the particular device.
-
 ### Deployment
 
 To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [releases](https://github.com/SoftwareAG/oee-simulators/releases) section.
@@ -165,44 +155,6 @@ C8Y_PASSWORD=yourpassword
 Additionally the following optional/debug variables can be set:
 ```
 MOCK_C8Y_REQUESTS=false
-PROFILES_PER_DEVICE=1
 ```
 
 - if MOCK_C8Y_REQUESTS is set to true, no requests to the C8Y tenant are executed, but you can see what would have been executed in the log
-- if PROFILES_PER_DEVICE is increased, more than one profile is created for each simulator; this might be useful when doing performance/scalability tests
-
-### Execution
-
-There are two ways to execute the profile generation. You can run it from the development environment [Visual Studio Code](#visual-studio-code) or from the command line.
-
-#### Execution from command line
-To execute the scripts from command line, open a command prompt and the *oee-simulators\simulators* folder.
-
-To create profiles, execute:
-```
-python .\main\profile_generator.py -c
-``` 
-
-To remove profiles using the OEE API, execute:
-```
-python .\main\profile_generator.py -r
-``` 
-
-To remove profiles using the standard Cumulocity IoT API (e.g. if OEE is not installed on the tenant), execute:
-```
-python .\main\profile_generator.py -d
-``` 
-
-#### Execution in Visual Studio Code
-
-- Open *simulators* folder in the VSC
-- Install python plugin: ms-python.python
-- adjust environment variables in [.vscode/.env](.vscode/.env)
-- click at the big run/debug icon in the left toolbar
-- select the configuration that you want to use from the dropdown: `create profiles`, `remove simulator profiles via OEE API`, `delete simulator profiles`
-- click the small green run/debug icon left of the dropdown in the top area to execute the configuration
-  
-
-
-
-  

@@ -37,11 +37,10 @@ class Test(unittest.TestCase):
             os.chdir("test")
 
         try:
-            # Create new simulator and oee profile
+            # Create new simulator
             Utils.setup_model(self)
             device_id = Utils.create_device(self.device_model_with_events)
             external_device_id = self.device_model_with_events.get('id')
-            profile_id = self.oee_api.create_and_activate_profile(external_id=external_device_id).get('id')
             filename = f"{external_device_id}_profile"
             data_file_path = f"export_data/{filename}.json"
 
@@ -79,7 +78,7 @@ class Test(unittest.TestCase):
             # Change work dir to extras
             Utilities.change_working_dir_between_extras_and_test()
             # Run the ExportProfileData.py script
-            call(["python", "ExportProfileData.py", "--device-ids", f"{profile_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
+            call(["python", "ExportProfileData.py", "--device-ids", f"{device_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
 
             # Change work dir to test dir
             Utilities.change_working_dir_between_extras_and_test()
@@ -94,8 +93,6 @@ class Test(unittest.TestCase):
         finally:
             # Change back to the original working directory
             os.chdir(current_dir)
-            # Delete test device and profile
-            Utils.delete_oee_profile_and_device(self=self, profile_id=profile_id, device_id=device_id)
 
 class Utilities:
     @staticmethod

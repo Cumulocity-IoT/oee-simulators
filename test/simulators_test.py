@@ -116,46 +116,41 @@ class Test(unittest.TestCase):
             json.dump(device_model, f)
         self.assertTrue(os.path.exists('simulator.json'), msg=f"simulator.json is not created")
 
-        try:
-            # Change to the 'main' directory to access simulator script
-            os.chdir("../simulators/main")
-            # Start the script with arguments
-            process = subprocess.Popen(["python", "simulator.py", "-b", C8Y_BASEURL, "-u", C8Y_USER, "-p", C8Y_PASSWORD, "-t", C8Y_TENANT, "-test"])
-            # Wait for 60 seconds
-            time.sleep(60)
-            # Terminate the script
-            process.terminate()
+        # Change to the 'main' directory to access simulator script
+        os.chdir("../simulators/main")
+        # Start the script with arguments
+        process = subprocess.Popen(["python", "simulator.py", "-b", C8Y_BASEURL, "-u", C8Y_USER, "-p", C8Y_PASSWORD, "-t", C8Y_TENANT, "-test"])
+        # Wait for 60 seconds
+        time.sleep(60)
+        # Terminate the script
+        process.terminate()
 
-            # Get event device id and profile id from device external id
-            event_device_id, event_profile_id = Utils.get_profile_and_device_ids_from_external_id(self, self.device_model_with_events.get('id'))
-            # Get measurement device id and profile id from device external id
-            measurement_device_id, measurement_profile_id = Utils.get_profile_and_device_ids_from_external_id(self, self.device_model_with_measurements.get('id'))
+        # Get event device id and profile id from device external id
+        event_device_id = Utils.get_device_id_from_external_id(self, self.device_model_with_events.get('id'))
+        # Get measurement device id and profile id from device external id
+        measurement_device_id = Utils.get_device_id_from_external_id(self, self.device_model_with_measurements.get('id'))
 
 # TODO! get some dates!
 #        { "id": "OneShiftLocation-DayShift", "seriesPostfix": "DayShift", "slotType": "PRODUCTION", "slotStart": "2022-07-13T08:00:00Z", "slotEnd": "2022-07-13T16:00:00Z", "description": "Day Shift", "active": true, "slotRecurrence": { "weekdays": [1, 2, 3, 4, 5] } },
 #        { "id": "OneShiftLocation-Break", "slotType": "BREAK", "slotStart": "2022-07-13T12:00:00Z", "slotEnd": "2022-07-13T12:30:00Z", "description": "Day Shift Break", "active": true, "slotRecurrence": { "weekdays": [1, 2, 3, 4, 5] } }
 
-            # Configure time milestone to extract data
+        # Configure time milestone to extract data
 #            for shiftplan in self.shiftplans[0].get('recurringTimeslots'):
 #                if shiftplan.get('slotType') == 'PRODUCTION':
 #                    date_from = shiftplan.get('slotStart')
 #                if shiftplan.get('slotType') == 'BREAK':
 #                    date_to = shiftplan.get('slotEnd')
 
-            date_from = "2022-07-13T08:00:00Z"
-            date_to = "2099-07-13T12:30:00Z"
+        date_from = "2022-07-13T08:00:00Z"
+        date_to = "2099-07-13T12:30:00Z"
 
-            # Get events from event simulator
-            events = self.cumulocity_api.get_events(date_from=date_from, date_to=date_to, device_id=event_device_id)
-            self.assertTrue(len(events.get('events')) > 0 , msg=f'No events found for simulator {self.device_model_with_events.get("label")}')
+        # Get events from event simulator
+        events = self.cumulocity_api.get_events(date_from=date_from, date_to=date_to, device_id=event_device_id)
+        self.assertTrue(len(events.get('events')) > 0 , msg=f'No events found for simulator {self.device_model_with_events.get("label")}')
 
-            # Get measurements from measurement simulator
-            measurements = self.cumulocity_api.get_measurements(date_from=date_from, date_to=date_to, device_id=measurement_device_id)
-            self.assertTrue(len(measurements.get('measurements')) > 0, msg=f'No measurements found for simulator #{self.device_model_with_measurements.get("label")}')
-
-        finally:
-            Utils.delete_oee_profile_and_device(self, profile_id=event_profile_id, device_id=event_device_id)
-            Utils.delete_oee_profile_and_device(self, profile_id=measurement_profile_id, device_id=measurement_device_id)
+        # Get measurements from measurement simulator
+        measurements = self.cumulocity_api.get_measurements(date_from=date_from, date_to=date_to, device_id=measurement_device_id)
+        self.assertTrue(len(measurements.get('measurements')) > 0, msg=f'No measurements found for simulator #{self.device_model_with_measurements.get("label")}')
 
         log.info('-' * 100)
 
@@ -263,10 +258,9 @@ class Utils:
 
         }
         return measurement
-    def get_profile_and_device_ids_from_external_id(self, external_id):
+    def get_device_id_from_external_id(self, external_id):
         device_id = self.cumulocity_api.get_device_by_external_id(external_id=f"{external_id}")
-        profile_id = self.cumulocity_api.get_profile_id(deviceID=device_id)
-        return device_id, profile_id
+        return device_id
 
     def delete_oee_profile_and_device(self, profile_id, device_id):
         self.cumulocity_api.delete_managed_object(profile_id)

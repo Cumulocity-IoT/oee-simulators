@@ -36,11 +36,10 @@ MEASUREMENT_COLLECTIONS_HEADERS = {
     'Authorization': 'Basic ' + user_and_pass
 }
 
+
 class CumulocityAPI:
 
     C8Y_SIMULATORS_GROUP = "c8y_EventBasedSimulator"
-    OEE_CALCULATION_PROFILE_TYPE = "OEECalculationProfile"
-    OEE_CALCULATION_CATEGORY = "OEECategoryConfiguration"
 
     def __init__(self) -> None:
         self.mocking = MOCK_REQUESTS.lower() == 'true'
@@ -162,39 +161,7 @@ class CumulocityAPI:
         
         # Check if device already created
         return self.get_device_by_external_id(sim_id) or self.__create_device(sim_id, label)
-    def count_all_profiles(self):
-        return self.__count_all(self.OEE_CALCULATION_PROFILE_TYPE)
-    
-    def count_all_categories(self):
-        return self.__count_all(self.OEE_CALCULATION_CATEGORY)
-    def __count_all(self, oee_type):
-        if self.mocking:
-            log.info(f'mock: count_all types({oee_type})')
-            return 5
 
-        request_query = f'{C8Y_BASEURL}/inventory/managedObjects/count?type={oee_type}'
-        repsonse = requests.get(request_query, headers=C8Y_HEADERS)
-        if repsonse.ok:
-            return repsonse.json()
-
-    def count_profiles(self, device_id):
-        ''' count all profiles for the given device id.
-        '''
-        if self.mocking:
-            log.info(f'mock: count_profiles(${device_id})')
-            return 10
-        request_query = f'{C8Y_BASEURL}/inventory/managedObjects/count?type={self.OEE_CALCULATION_PROFILE_TYPE}&text={device_id}'
-        response = requests.get(request_query, headers=C8Y_HEADERS)
-        if response.ok:
-            try:
-                return int(response.text)
-            except Exception as e:
-                log.warning(f'cannot convert "${response.text}" to number. exception: {e}')
-                return 0
-        else:
-            self.log_warning_on_bad_response(response)
-            return 0
-    
     def create_managed_object(self, fragment: str):
         if self.mocking:
             log.info(f'mock: create_managed_object()')
@@ -215,16 +182,6 @@ class CumulocityAPI:
             return response.json()
         self.log_warning_on_bad_response(response)
         #TODO: check for errors
-        return {}
-    
-    def get_calculation_categories(self):
-        if self.mocking:
-            log.info(f'mock: get_managed_object()')
-            return [{'id': '0'}]
-        response = requests.get(C8Y_BASEURL + f'/inventory/managedObjects?type={self.OEE_CALCULATION_CATEGORY}', headers=C8Y_HEADERS)
-        if response.ok:
-            return response.json()['managedObjects']
-        self.log_warning_on_bad_response(response)        
         return {}
 
     def delete_managed_object(self, id: str):
@@ -319,47 +276,3 @@ class CumulocityAPI:
             return response.json()
         log.warning(f'Could not get any tenant options for category {category}. Response status code is: {response}, content: {response.text}')
         return {}
-
-    def get_profile_id(self, deviceID):
-        request_query = f'{C8Y_BASEURL}/inventory/managedObjects?type={self.OEE_CALCULATION_PROFILE_TYPE}&text={deviceID}'
-        response = requests.get(request_query, headers=C8Y_HEADERS)
-        if response.ok:
-            try:
-                return response.json()['managedObjects'][0]['id']
-            except Exception as e:
-                log.warning(f'Cannot get id of profile: "{response.text}". exception: {e}')
-                return ""
-        else:
-            self.log_warning_on_bad_response(response)
-            return ""
-
-    def createISAType(self, type, hierarchy, description, oeetarget):
-        isaObjectRequestBody = {
-            "hierarchy": hierarchy,
-            "isISAObject":{},
-            "description": description,
-            "detailedDescription": description,
-            "type": type,
-            "oeetarget": oeetarget,
-            "orderByIndex":0,
-        }
-        return self.create_managed_object(json.dumps(isaObjectRequestBody))
-
-    def updateISAType(self, id, type, hierarchy, description, oeetarget):
-        isaObjectRequestBody = {
-            "hierarchy": hierarchy,
-            "isISAObject":{},
-            "description": description,
-            "detailedDescription": description,
-            "type": type,
-            "oeetarget": oeetarget,
-            "orderByIndex":0,
-        }
-        return self.update_managed_object(id, json.dumps(isaObjectRequestBody))
-
-    def getISAObjects(self):
-        request_query = f'{C8Y_BASEURL}/inventory/managedObjects?pageSize=1000&withTotalPages=false&fragmentType=isISAObject'
-        response = requests.get(request_query, headers=C8Y_HEADERS)
-        if response.ok:
-            return response.json()['managedObjects']
-        return []
