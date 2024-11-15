@@ -15,7 +15,6 @@ Detailed feature list:
 - identifies devices using a configurable `externalId`.
 - devices can be disabled to not send any events and measurements.
 - Written in python which can be modified easily for further development.
-- Simulators work based on status and shift that it is assigned.
 
 ### Simulator definition
 Creating simulators in Cumulocity based on the definitions in [simulators.json](main/simulator.json). Those simulators can be used for profiles in the OEE App. The currently supported simulators and the corresponding profiles are described [here](simulators.md).
@@ -112,50 +111,11 @@ Example for a simulator definition:
   
   - In measurements, `valueDistribution` is defined to let the simulator know which distribution formula to use to generate measurements. There are three choices that can be defined here: `uniform`, `uniformint`, `normal`.
 
-- Simulates shutdowns (no events or measurements are sent if simulator is DOWN or out of shift)
+- Simulates shutdowns (no events or measurements are sent if simulator is DOWN)
 
 - the main entry point is [simulator.py](main/simulator.py)
   - the script reads the configuration from [simulator.json](main/simulator.json) and creates a new device for every entry
   - the `id` property is used as `external_id` for the ManagedObjects to avoid creating multiple devices when redeploying/updating the microservice
-  
-    - Simulators act according to given Shiftplans
-      - Simulators are linked to shiftplans via locationId.
-      - The `locationId` presented in [shiftplans.json](main/shiftplans.json) are used to parse for all shiftplans used in the script but only a specific shiftplan is applied to a simulator if it has the `locationId` of a shift defined.
-        ```
-        {
-          "type": "Simulator",
-          "id": "sim_012",
-          "label": "Normal #12 with short shifts",
-          "locationId": "ShortShiftsLocation",
-          "enabled": true
-        }
-        ```
-        In this example, the ShortShiftsLocation shift is applied to the simulator sim_012.
-      - If a Simulator is not in Production time according to the given Shiftplan, it will not produce any events and measurements.
-      - At startup [shiftplans.json](main/shiftplans.json) is parsed once and the shifts are created accordingly (if they do not exist).
-      - Everytime an event/measurement is about to be sent, the script checks if the status of the locationId equals PRODUCTION; and only if the status is correct, the event/measurement is sent.
-      - Since the status of shiftplans is checked in realtime, if there are any changes to the shiftplans, they are taken into account.
-
-
-### Shiftplan definition
-```
-  [
-    {
-      "locationId": "OneShiftLocation",
-      "recurringTimeslots": [
-        { "id": "OneShiftLocation-DayShift", "seriesPostfix": "DayShift", "slotType": "PRODUCTION", "slotStart": "2022-07-13T08:00:00Z", "slotEnd": "2022-07-13T16:00:00Z", "description": "Day Shift", "active": true, "slotRecurrence": { "weekdays": [1, 2, 3, 4, 5] } },
-        { "id": "OneShiftLocation-Break", "slotType": "BREAK", "slotStart": "2022-07-13T12:00:00Z", "slotEnd": "2022-07-13T12:30:00Z", "description": "Day Shift Break", "active": true, "slotRecurrence": { "weekdays": [1, 2, 3, 4, 5] } }
-      ]
-    },
-    {...}
-  ]
-```
-This is an example of a shiftplan which contains a shift name `OneShiftLocation` in `locationId` field.
-The `recurringTimeslots` field is an array which define components of the shift. In this case, this shift has two parts: 
-  - `OneShiftLocation-DayShift` is the shift for `PRODUCTION`, in which the applied simulators will generate events and measurements. The length of the shift is defined by the abstraction between `slotEnd` and `slotStart` and the `active` field is set to true means that this component of the shift is activated. The field `slotRecurrence` defined which day of the week can the applied simulators work. `""weekdays": [1, 2, 3, 4, 5]` means the applied simulators will work from Monday to Friday.
-  - `OneShiftLocation-Break` is the shift for `BREAK`, in which the applied simulators will not generate events and measurements. The other setup is the same as above.
-
-**Only `recurringTimeslots` is supported**, `timeslots` is not support.
 
 ### Build the docker image
 
@@ -178,11 +138,7 @@ This zip file can then be uploaded as a Microservice to Cumulocity IoT.
 The creation of profiles can be configured using the Tenant Options on the given Cumulocity tenant. See the [Cumulocity REST API](https://cumulocity.com/api/10.14.0/#tag/Options) documentation for details. The Tenant Options must use the category: "simulators"
 
 Some Options can be configured:
-- CREATE_PROFILES - holds a string with 'CREATE' or 'CREATE_IF_NOT_EXISTS' to indicate if the profiles should be overwritten or only created if they not already exist. Default: 'CREATE_IF_NOT_EXISTS'
-- CREATE_PROFILES_ARGUMENTS - can be used to set a string that is passed down as arguments to the profile creation script [Execution from command line / CLI arguments](#execution-from-command-line). 
-- CREATE_ASSET_HIERARCHY - holds a boolean with 'true' or 'false' to indicate whether the Simulator should create the asset hierarchy for OEE. If set to true it will create one SITE with one LINE that holds all devices and their profiles. Default: 'false'
 - LOG_LEVEL - sets the used logging-level of the simulator. Choose between INFO and DEBUG. DEBUG does give a more detailed output of the Simulator's configuration and decisions. Default: 'INFO'
-- DELETE_PROFILES - Holds a boolean either 'True' or 'False' to indicate whether OEE_Profiles created by the simulator should be deleted beforehand.
 
 Note: A profile will be created and activated only if no other profiles are already defined for the particular device.
 
@@ -190,13 +146,9 @@ Note: A profile will be created and activated only if no other profiles are alre
 
 To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [releases](https://github.com/SoftwareAG/oee-simulators/releases) section.
 
-## Profile generator
-
-The Profile Generator is a [Python script](main/profile_generator.py) that creates OEE calculation profiles for each simulator available in the tenant. Every simulator needs a template with appropriate name (<external_id>_profile.template) in your local [main](main/profile_templates) folder. The simulators must have been created beforehand by deploying the [oee-simulators](#simulator-microservice) microservice.
-
 ### Environment
 
-Install python 3.8.3+ on your system. Probably you'll need install some packages using *pip* commmand, e.g.
+Install python 3.8.3+ on your system. Probably you'll need install some packages using *pip* command, e.g.
 ```
 pip install requests
 ```
@@ -245,7 +197,7 @@ python .\main\profile_generator.py -d
 
 - Open *simulators* folder in the VSC
 - Install python plugin: ms-python.python
-- adjust environemnt varibales in [.vscode/.env](.vscode/.env)
+- adjust environment variables in [.vscode/.env](.vscode/.env)
 - click at the big run/debug icon in the left toolbar
 - select the configuration that you want to use from the dropdown: `create profiles`, `remove simulator profiles via OEE API`, `delete simulator profiles`
 - click the small green run/debug icon left of the dropdown in the top area to execute the configuration

@@ -4,7 +4,6 @@ import config.root # Configure root directories
 import simulators.extras.Environment as Ex_Im_Env
 
 from datetime import timezone, datetime, timedelta
-from simulators.main.oeeAPI import ProfileCreateMode, OeeAPI
 from simulators.main.cumulocityAPI import CumulocityAPI, C8Y_USER, C8Y_PASSWORD, C8Y_TENANT, C8Y_BASEURL
 from unittest.mock import patch
 from subprocess import call
@@ -17,15 +16,9 @@ logging.basicConfig(format='%(asctime)s %(name)s:%(message)s', level=logging.DEB
 
 class Test(unittest.TestCase):
     def setUp(self):
-        self.oee_api = OeeAPI()
         self.cumulocity_api = CumulocityAPI()
         # Get Tenant Options and configure Simulator
         self.MICROSERVICE_OPTIONS = self.cumulocity_api.get_tenant_option_by_category("simulators")
-        self.PROFILE_CREATE_MODE = ProfileCreateMode[self.MICROSERVICE_OPTIONS.get("CREATE_PROFILES", "CREATE_IF_NOT_EXISTS")]
-        self.CREATE_PROFILES_ARGUMENTS = self.MICROSERVICE_OPTIONS.get("CREATE_PROFILES_ARGUMENTS", "")
-        self.CREATE_ASSET_HIERARCHY = self.MICROSERVICE_OPTIONS.get("CREATE_ASSET_HIERARCHY", "False")
-        self.REPLACE_EXISTING_TIMESLOTS = self.MICROSERVICE_OPTIONS.get("REPLACE_EXISTING_TIMESLOTS", "False")
-        self.DELETE_PROFILES = self.MICROSERVICE_OPTIONS.get("DELETE_PROFILES", "False")
         self.device_model = {
             "type": "Simulator",
             "id": "sim_001_test",

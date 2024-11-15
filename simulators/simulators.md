@@ -61,26 +61,6 @@ The simulators will create machines sending events required to configure Cumuloc
 - **Performance**: the simulator produces an event `Pieces_Produced`. The event is produced 60 times per hour and it contains fields named `piecesMinimumPerProduction` and `piecesMaximumPerProduction` with value 5. The summary amount of events per hour is 60 which results in the amount of production pieces is 300 per hours. 
 - **Quality**: the simulator produces a `Pieces_Ok` event. It contains fields named `piecesMinimumPerProduction` and `piecesMaximumPerProduction` with value 5. Those events follow a few seconds after a corresponding `Pieces_Produced` event (both events have the same timestamp). The summary amount of quality pieces is also 300 per hour, which results in a quality of 100%.  
 
-##### 12. Normal #12 with short shifts
-- **Availability**: the simulator produces an `Availability` event which has a field `status` that is either `up` or `down`. This event is produced 5-10 times per hour with 90% being `up`. The simulator also follows the shiftplan `ShortShiftsLocation` which works in 12 consecutive shifts that last 1 hour each.
-- **Performance**: the simulator produces an event `Piece_Produced`. The event is produced about 25 times per hour.
-- **Quality**:  the simulator produces an event `Piece_Ok`. The event is produced shortly after the `Piece_Produced` event (both events have the same timestamp). The event is produced about 20 times per hour which results in a quality of 80%.
-
-##### 13. Normal #13 with one day shift
-- **Availability**: the simulator produces an `Availability` event which has a field `status` that is either `up` or `down`. This event is produced 5-10 times per hour with 90% being `up`. The simulator also follows the shiftplan `OneShiftLocation` which works 8 hours a day with a short break 30 minutes.
-- **Performance**: the simulator produces an event `Piece_Produced`. The event is produced about 25 times per hour.
-- **Quality**:  the simulator produces an event `Piece_Ok`. The event is produced shortly after the `Piece_Produced` event (both events have the same timestamp). The event is produced about 20 times per hour which results in a quality of 80%.
-
-##### 14. Normal #14 with two shifts
-- **Availability**: the simulator produces an `Availability` event which has a field `status` that is either `up` or `down`. This event is produced 5-10 times per hour with 90% being `up`. The simulator also follows the shiftplan `TwoShiftLocation` which works in 2 shifts, each last for 8 hours with a short break 30 minutes.
-- **Performance**: the simulator produces an event `Piece_Produced`. The event is produced about 25 times per hour.
-- **Quality**:  the simulator produces an event `Piece_Ok`. The event is produced shortly after the `Piece_Produced` event (both events have the same timestamp). The event is produced about 20 times per hour which results in a quality of 80%.
-
-##### 15. Normal #15 with three shifts
-- **Availability**: the simulator produces an `Availability` event which has a field `status` that is either `up` or `down`. This event is produced 5-10 times per hour with 90% being `up`. The simulator also follows the shiftplan `ThreeShiftLocation` which works in 3 shifts, each last for 8 hours with a short break 30 minutes.
-- **Performance**: the simulator produces an event `Piece_Produced`. The event is produced about 25 times per hour.
-- **Quality**:  the simulator produces an event `Piece_Ok`. The event is produced shortly after the `Piece_Produced` event (both events have the same timestamp). The event is produced about 20 times per hour which results in a quality of 80%.
-
 #### Measurements simulators
 The simulators will create machines sending measurements to Cumulocity IoT OEE app.
 
@@ -114,25 +94,7 @@ The simulators will create machines sending measurements to Cumulocity IoT OEE a
 - **Pieces**:\
     "series": "OK" \
     "unit": "pcs"
-
-##### 19. Measurement Simulator #4 with three shifts
-The simulator also follows the shiftplan `ThreeShiftLocation` which works in 3 shifts, each last for 8 hours with a short break 30 minutes.
-- **Pressure**:\
-    "series": "P"\
-    "unit": "hPa"
-- **Pieces**:\
-    series": "Produced"\
-    unit": "pcs"
-
-##### 20. Measurement Simulator #5 with one day shift
-The simulator follows the shiftplan `OneShiftLocation` which works 8 hours a day with a short break 30 minutes.
-- **Pressure**:
-                "series": "P",
-                "unit": "hPa",
-- **Pieces**:
-                "series": "Produced",
-                "unit": "pcs"
-- 
+ 
 ### OEE profile settings for events simulators
 
 Labels not mentioned explicitly in the following table, such as for example `Profile Name`, `Machine Location` or `Workpiece Name`, can be arbitrary values as they don't have any influence on the calculation. 
@@ -158,10 +120,6 @@ The computation method is `PPQ` for all profiles. Matching settings for each pro
 | Ideal Producer Q80             | 60 pcs per hour   | APA: Event count `Piece_Produced`<br />APT: Value from event: `Availability` = String `up`<br />AQA: Event count `Piece_Ok`                                                                 | 80, 100, 100, 80                                        |                                  |
 | Ideal Producer A80             | 300 pcs per hour  | APA: Value from event `Pieces_Produced` count<br />APT: Value from event: `Availability` = String `up`<br />AQA: Value from event `Pieces_Ok` count                                         | 80, 80, 100, 100                                        |                                  |
 | Ideal Producer with Categories | 300 pcs per hour  | APA: Value from event `Pieces_Produced` count<br />APT: Value from event: `Availability` = String `up`<br />AQA: Value from event `Pieces_Ok` count                                         | 90, 90, 100, 100                                        |                                  |
-| Normal #12 with short shifts   | 25 pcs per hour   | APA: Event count `Piece_Produced`<br />APT: Value from event: `Availability` = String `up`<br />AQA: Event count `Piece_Ok`                                                                 | 60, 90, 90, 90                                          | Shiftplan: `ShortShiftsLocation` |
-| Normal #13 with one day shift  | 25 pcs per hour   | APA: Event count `Piece_Produced`<br />APT: Value from event: `Availability` = String `up`<br />AQA: Event count `Piece_Ok`                                                                 | 60, 90, 90, 90                                          | Shiftplan: `OneShiftLocation`    |
-| Normal #14 with two shifts     | 25 pcs per hour   | APA: Event count `Piece_Produced`<br />APT: Value from event: `Availability` = String `up`<br />AQA: Event count `Piece_Ok`                                                                 | 60, 90, 90, 90                                          | Shiftplan: `TwoShiftLocation`    |
-| Normal #15 with three shifts   | 25 pcs per hour   | APA: Event count `Piece_Produced`<br />APT: Value from event: `Availability` = String `up`<br />AQA: Event count `Piece_Ok`                                                                 | 60, 90, 90, 90                                          | Shiftplan: `ThreeShiftLocation`  |
 
 - APA: Actual Production Amount
 - APT: Actual Production Time (enable *define machine status event*)
@@ -174,5 +132,3 @@ The computation method is `PPQ` for all profiles. Matching settings for each pro
 | Measurement Simulator #1                    | `Pressure` (series: P, unit: hPa, freq: 4), `PieceProduced` (series: Width, unit: mm, freq: 2)                                            | --------                       |
 | Measurement Simulator #2                    | `Pressure` (series: P, unit: hPa, freq: 4), `Pieces` (series: Produced, unit: pcs, freq: 2), `Pieces` (series: OK, unit: pcs, freq: 2)    | --------                       |
 | Measurement Simulator #3                    | `ProductionTime` (series: T, unit: s, freq: 4), `Pieces` (series: Produced, unit: pcs, freq: 2), `Pieces` (series: OK, unit: pcs, freq: 2) | --------                       |
-| Measurement Simulator #4 with three shifts  | `Pressure` (series: P, unit: hPa, freq: 4), `Pieces` (series: Produced, unit: pcs, freq: 2)                                               | shiftplan `ThreeShiftLocation` |
-| Measurement Simulator #5 with one day shift | `Pressure` (series: P, unit: hPa, freq: 4), `Pieces` (series: Produced, unit: pcs, freq: 2)                                               | shiftplan `OneShiftLocation`   |
