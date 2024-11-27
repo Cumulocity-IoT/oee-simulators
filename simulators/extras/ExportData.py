@@ -12,7 +12,7 @@ C8Y_HEADERS, MEASUREMENTS_HEADERS = ArgumentsAndCredentialsHandler.SetupHeadersF
 # Setup Log
 file_log_level = logging.DEBUG
 console_log_level = LOG_LEVEL
-consoleLogger = ArgumentsAndCredentialsHandler.SetupLogger(console_logger_name='ConsoleExportProfileData', console_log_level=console_log_level)
+consoleLogger = ArgumentsAndCredentialsHandler.SetupLogger(console_logger_name='ConsoleExportData', console_log_level=console_log_level)
 #####################################################
 
 session = requests.Session()
@@ -31,7 +31,7 @@ else:
 ######################################################
 
 
-def ExportAllProfileDataFromChildDevices(createFrom, createTo):
+def ExportAllDataFromChildDevices(createFrom, createTo):
     deviceInTenantCount = 0
     childDeviceCount = 0
     deviceManagedObject = c8y.device_inventory.select(type=C8Y_OEE_SIMULATOR_DEVICES_GROUP)
@@ -42,7 +42,7 @@ def ExportAllProfileDataFromChildDevices(createFrom, createTo):
             childDeviceCount += len(device.child_devices)
             consoleLogger.info(f"List {len(device.child_devices)} of {device.name}'s child devices: ")
             for childDevice in device.child_devices:
-                ExportSpecificProfileDataWithDeviceId(createFrom=createFrom,createTo=createTo, deviceId=childDevice.id)
+                ExportSpecificDataWithDeviceId(createFrom=createFrom, createTo=createTo, deviceId=childDevice.id)
 
     if deviceInTenantCount == 0:
         consoleLogger.info(f"No device in tenant {c8y.tenant_id} found")
@@ -50,13 +50,13 @@ def ExportAllProfileDataFromChildDevices(createFrom, createTo):
         consoleLogger.info(f"There are {deviceInTenantCount} devices with {childDeviceCount} child devices in total")
 
 
-def ExportSpecificProfileDataWithDeviceId(createFrom, createTo, deviceId):
+def ExportSpecificDataWithDeviceId(createFrom, createTo, deviceId):
     deviceName = FindDeviceNameById(deviceId, c8y.base_url)
     consoleLogger.info(f"Child device {deviceName}, id #{deviceId}")
     deviceExternalId, deviceExternalIdType = CheckDeviceExternalIdById(deviceId, c8y.base_url)
     if not deviceExternalId:
         return
-    if IsExternalIdTypeEventBasedSimulatorProfile(deviceExternalIdType):
+    if IsExternalIdTypeEventBasedSimulator(deviceExternalIdType):
         filePath = CreateFilePath(Id=deviceExternalId)
     else:
         return
@@ -153,7 +153,7 @@ def CheckDeviceExternalIdById(deviceId, baseUrl):
     return deviceExternalId, deviceExternalIdType
 
 
-def IsExternalIdTypeEventBasedSimulatorProfile(deviceExternalIdType):
+def IsExternalIdTypeEventBasedSimulator(deviceExternalIdType):
     if deviceExternalIdType == C8Y_OEE_SIMULATOR_DEVICES_GROUP:
         return True
     else:
@@ -213,7 +213,7 @@ if __name__ == '__main__':
     consoleLogger.info(f"and created before/to: {createTo}")
 
     if not DEVICE_ID_LIST:
-        ExportAllProfileDataFromChildDevices(createFrom=createFrom, createTo=createTo)
+        ExportAllDataFromChildDevices(createFrom=createFrom, createTo=createTo)
     else:
         for deviceId in DEVICE_ID_LIST:
-            ExportSpecificProfileDataWithDeviceId(createFrom=createFrom, createTo=createTo, deviceId=deviceId)
+            ExportSpecificDataWithDeviceId(createFrom=createFrom, createTo=createTo, deviceId=deviceId)

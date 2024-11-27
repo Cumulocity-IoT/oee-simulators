@@ -1,8 +1,8 @@
 # Generic scripts information
 This scripts folder contains:
-- The [Export Script](./ExportOrImportProfileData.py) can be used to export a json file for any managed object. This json file can then be used for the import.
+- The [Export Script](./ExportData.py) can be used to export a json file for any managed object. This json file can then be used for the import.
 - The [Environment File](./Environment.py) is used to set up environment parameters.
-- The [Import Script](./ImportData.py) can be used to import alarms and measurements into cumulocity.
+- The [Import Script](./ImportData.py) can be used to import alarms and measurements into Cumulocity IoT.
 
 ## Setup environment parameters:
 Input necessary configuration in **Environment.py** file\

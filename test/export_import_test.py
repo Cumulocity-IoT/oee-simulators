@@ -27,7 +27,7 @@ class Test(unittest.TestCase):
         }
 
     @patch('logging.Logger.error')
-    def test_export_import_profile_data(self, mock_error):
+    def test_export_import_data(self, mock_error):
         # Get current working directory
         current_dir = os.getcwd()
         # Extracts the base name of the current directory
@@ -96,7 +96,7 @@ class Test(unittest.TestCase):
         finally:
             # Change back to the original working directory
             os.chdir(current_dir)
-            # Delete test device and profile
+            # Delete test device
             Utils.delete_device(self=self, device_id=device_id)
 
 class Utilities:

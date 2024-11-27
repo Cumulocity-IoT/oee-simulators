@@ -125,9 +125,9 @@ class Test(unittest.TestCase):
         # Terminate the script
         process.terminate()
 
-        # Get event device id and profile id from device external id
+        # Get event device id from device external id
         event_device_id = Utils.get_device_id_from_external_id(self, self.device_model_with_events.get('id'))
-        # Get measurement device id and profile id from device external id
+        # Get measurement device id from device external id
         measurement_device_id = Utils.get_device_id_from_external_id(self, self.device_model_with_measurements.get('id'))
 
 # TODO! get some dates!
