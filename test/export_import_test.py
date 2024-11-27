@@ -79,8 +79,8 @@ class Test(unittest.TestCase):
 
             # Change work dir to extras
             Utilities.change_working_dir_between_extras_and_test()
-            # Run the ExportProfileData.py script
-            call(["python", "ExportProfileData.py", "--device-ids", f"{device_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
+            # Run the ExportData.py script
+            call(["python", "ExportData.py", "--device-ids", f"{device_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
 
             # Change work dir to test dir
             Utilities.change_working_dir_between_extras_and_test()
