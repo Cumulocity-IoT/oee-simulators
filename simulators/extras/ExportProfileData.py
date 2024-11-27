@@ -5,7 +5,6 @@ from datetime import datetime, timedelta, timezone
 
 # Global variables and constants
 logTimeFormat = "%Y%m%d%H%M%S_%f"
-C8Y_PROFILE_GROUP = 'c8y_EventBasedSimulatorProfile'
 C8Y_OEE_SIMULATOR_DEVICES_GROUP = "c8y_EventBasedSimulator"
 DATA_TYPE, DEVICE_ID_LIST, CREATE_FROM, CREATE_TO, LOG_LEVEL, c8y, PASSWORD, TEST_FLAG = ArgumentsAndCredentialsHandler.HandleExportArguments()
 C8Y_HEADERS, MEASUREMENTS_HEADERS = ArgumentsAndCredentialsHandler.SetupHeadersForAPIRequest(tenant_id=c8y.tenant_id, username= c8y.username, password=PASSWORD)

@@ -11,7 +11,7 @@ EXPORT_DATA_FOLDER = 'export_data'
 timeFormat = "%Y-%m-%dT%H:%M:%S.%fZ"
 logTimeFormat = "%Y%m%d%H%M%S_%f"
 file_log_level = logging.DEBUG
-C8Y_PROFILE_GROUP = 'c8y_EventBasedSimulatorProfile'
+C8Y_OEE_SIMULATOR_DEVICES_GROUP = 'c8y_EventBasedSimulator'
 json_filename_list_to_import, console_log_level, c8y, password, verifySslCertificate, TEST_FLAG, strict_mode = ArgumentsAndCredentialsHandler.HandleImportArguments()
 C8Y_HEADERS, MEASUREMENTS_HEADERS = ArgumentsAndCredentialsHandler.SetupHeadersForAPIRequest(tenant_id=c8y.tenant_id, username= c8y.username, password=password)
 ####################################################
@@ -37,12 +37,12 @@ else:
 
 
 def GetDeviceIdByExternalId(external_id):
-    consoleLogger.info(f'Searching for device with ext ID {external_id}')
+    consoleLogger.info(f'Searching for device with ext ID {C8Y_OEE_SIMULATOR_DEVICES_GROUP}/{external_id}')
     encoded_external_id = EncodeUrl(external_id)
-    response = session.get(f'{c8y.base_url}/identity/externalIds/{C8Y_PROFILE_GROUP}/{encoded_external_id}', headers=C8Y_HEADERS)
+    response = session.get(f'{c8y.base_url}/identity/externalIds/{C8Y_OEE_SIMULATOR_DEVICES_GROUP}/{encoded_external_id}', headers=C8Y_HEADERS)
     if response.ok:
         device_id = response.json()['managedObject']['id']
-        consoleLogger.info(f'Device({device_id}) has been found by its external id "{C8Y_PROFILE_GROUP}/{external_id}".')
+        consoleLogger.info(f'Device({device_id}) has been found by its external id "{C8Y_OEE_SIMULATOR_DEVICES_GROUP}/{external_id}".')
         return device_id
     consoleLogger.warning(response.json())
     if strict_mode:
