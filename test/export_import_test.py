@@ -41,8 +41,10 @@ class Test(unittest.TestCase):
             Utils.setup_model(self)
             device_id = Utils.create_device(self.device_model_with_events)
             external_device_id = self.device_model_with_events.get('id')
-            filename = f"{external_device_id}_profile"
-            data_file_path = f"export_data/{filename}.json"
+            filename = f"{external_device_id}"
+            data_file_path = f"export_data/{external_device_id}.json"
+
+            self.assertTrue(os.path.exists(data_file_path), msg=f"Sample data file {filename}.json does not exist!")
 
             log.info('*' * 100)
             log.info("Importing data")
@@ -82,7 +84,7 @@ class Test(unittest.TestCase):
 
             # Change work dir to test dir
             Utilities.change_working_dir_between_extras_and_test()
-            # Check if the sim_001_test_profile.json is created
+            # Check if the sim_001_test.json is created
             log.info(f"Checking if {os.path.abspath(data_file_path)} is created...")
             self.assertTrue(os.path.exists(data_file_path), msg=f"{filename}.json not found")
 
