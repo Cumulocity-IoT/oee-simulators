@@ -83,6 +83,7 @@ class Test(unittest.TestCase):
             # Change work dir to test dir
             Utilities.change_working_dir_between_extras_and_test()
             # Check if the sim_001_test_profile.json is created
+            log.info(f"Checking if {os.path.abspath(data_file_path)} is created...")
             self.assertTrue(os.path.exists(data_file_path), msg=f"{filename}.json not found")
 
             # Open the JSON file and load its contents
