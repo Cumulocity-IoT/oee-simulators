@@ -123,6 +123,7 @@ def ListMeasurements(deviceId, createFrom, createTo):
 
 
 def AppendDataToJsonFile(jsonDataList, filePath, data_type, json_data={}):
+    consoleLogger.info(f"Adding {data_type} to file: {filePath}")
     # Create new json file or add data to an existing json file
     with open(filePath, 'w') as f:
         json_data[f"{data_type}"] = jsonDataList
@@ -167,7 +168,7 @@ def CreateFilePath(Id):
         os.makedirs('export_data')
     relativeFilePath = f'export_data/{Id}.json'
     filePath = os.path.join(os.getcwd(), relativeFilePath)
-    consoleLogger.debug(f"Created successfully file path: {filePath}")
+    consoleLogger.info(f"Created successfully file path: {filePath}")
     return filePath
 
 

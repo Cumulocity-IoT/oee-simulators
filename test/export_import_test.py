@@ -130,15 +130,6 @@ class Utilities:
         elif base_dir == "extras":
             os.chdir("../../test")
 
-    @staticmethod
-    def change_working_dir_between_extras_and_test():
-        base_dir = os.path.basename(os.getcwd())
-        # If the working directory is test then change to extras
-        if base_dir == "test":
-            os.chdir("../simulators/extras")
-        elif base_dir == "extras":
-            os.chdir("../../test")
-
 if __name__ == '__main__':
     # create a test suite
     suite = unittest.TestLoader().loadTestsFromTestCase(Test)
