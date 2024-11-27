@@ -142,7 +142,7 @@ def GetExternalIdReponse(deviceId, baseUrl):
 
 def CheckDeviceExternalIdById(deviceId, baseUrl):
     externalIdResponse = GetExternalIdReponse(deviceId, baseUrl)
-
+    consoleLogger.info(f"externalIdResponse for {deviceId}: {externalIdResponse.json()}")
     try:
         deviceExternalId = externalIdResponse.json()['externalIds'][0]['externalId']
         deviceExternalIdType = externalIdResponse.json()['externalIds'][0]['type']
