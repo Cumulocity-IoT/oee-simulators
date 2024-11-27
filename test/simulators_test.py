@@ -262,9 +262,7 @@ class Utils:
         device_id = self.cumulocity_api.get_device_by_external_id(external_id=f"{external_id}")
         return device_id
 
-    def delete_oee_profile_and_device(self, profile_id, device_id):
-        self.cumulocity_api.delete_managed_object(profile_id)
-        log.info(f"Removed the test oee profile with id {profile_id}")
+    def delete_device(self, device_id):
         self.cumulocity_api.delete_managed_object(device_id)
         log.info(f"Removed the test device with id {device_id}")
 

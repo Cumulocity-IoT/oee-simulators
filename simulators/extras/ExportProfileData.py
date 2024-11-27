@@ -154,10 +154,10 @@ def CheckDeviceExternalIdById(deviceId, baseUrl):
 
 
 def IsExternalIdTypeEventBasedSimulatorProfile(deviceExternalIdType):
-    if deviceExternalIdType == C8Y_PROFILE_GROUP:
+    if deviceExternalIdType == C8Y_OEE_SIMULATOR_DEVICES_GROUP:
         return True
     else:
-        consoleLogger.info(f"The type {deviceExternalIdType} of external ID must match with type {C8Y_PROFILE_GROUP}")
+        consoleLogger.info(f"The type {deviceExternalIdType} of the external ID is _not_ the same as type {C8Y_OEE_SIMULATOR_DEVICES_GROUP}!")
         return False
 
 

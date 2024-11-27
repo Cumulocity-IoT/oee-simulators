@@ -93,6 +93,8 @@ class Test(unittest.TestCase):
         finally:
             # Change back to the original working directory
             os.chdir(current_dir)
+            # Delete test device and profile
+            Utils.delete_device(self=self, device_id=device_id)
 
 class Utilities:
     @staticmethod
