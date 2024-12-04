@@ -1,11 +1,11 @@
 # Description OEE-Simulators
 
-OEE-simulators offers these main features in [main](main): 
-- the **oee-simulators microservice** which creates devices and sends data into Cumulocity.
+The OEE-simulators project offers these main features in the [main](main) folder: 
+- the **oee-simulators microservice** which creates devices and sends data into Cumulocity IoT.
 
 There are extra features in [extras](extras):
-- the **export profile data** to export Measurements or/and Alarms from OEE profiles into json data files.
-- the **import data** to upload Measurements or/and Alarms from data json file to OEE profiles.
+- the **export data** script to export Measurements or/and Alarms from OEE devices into json data files.
+- the **import data** script to upload Measurements or/and Alarms from data json file to OEE devices.
 
 ## Simulator Microservice
 Detailed feature list:
@@ -16,8 +16,7 @@ Detailed feature list:
 - Written in python which can be modified easily for further development.
 
 ### Simulator definition
-Creating simulators in Cumulocity based on the definitions in [simulators.json](main/simulator.json). Those simulators can be used for profiles in the OEE App. The currently supported simulators and the corresponding profiles are described [here](simulators.md).
-
+The simulators are created in Cumulocity IoT based on the definitions in [simulators.json](main/simulator.json). Those simulators can be used for calculation in the OEE block. The currently supported simulators described [here](simulators.md).
 
 Example for a simulator definition:
 ```
@@ -70,10 +69,10 @@ Example for a simulator definition:
     "status": ["up", "down"],
     "probabilities": [0.9, 0.1]
   ```
-  In this case, the up status has 90% to happen and the down status has the remain 10%.
+  In this case, the up status has 90% to happen and the down status has the remaining 10%.
 
-- the timestamp of the following `Piece_ok` event is the same as corresponding `Piece_Produced` event
-  - the expected quality of production is configurable.  
+- the timestamp of the following `Piece_ok` event is the same as the corresponding `Piece_Produced` event
+  - the expected quality of production is configurable
   ```
     "events": [
       "type": "Piece_Produced",
@@ -85,6 +84,7 @@ Example for a simulator definition:
     ]
   ```
     the expected quality would be 80% (*followedBy.frequency/frequency * 100%*)
+
 - For the `Pieces_Produced`, the simulator produces multiple pieces at a time so the minimum (`piecesMinimumPerProduction`) and maximum pieces per production (`piecesMaximumPerProduction`) must be set
   ```
     "type": "Pieces_Produced",
@@ -112,11 +112,11 @@ Example for a simulator definition:
 
 - Simulates shutdowns (no events or measurements are sent if simulator is DOWN)
 
-- the main entry point is [simulator.py](main/simulator.py)
-  - the script reads the configuration from [simulator.json](main/simulator.json) and creates a new device for every entry
+- the main entry point is the [simulator.py](main/simulator.py) script
+  - the script reads the configuration from [simulator.json](main/simulator.json) and creates a new device for every entry (if it does not exist)
   - the `id` property is used as `external_id` for the ManagedObjects to avoid creating multiple devices when redeploying/updating the microservice
 
-### Build the docker image
+### Build the docker image locally
 
 To build the docker image for this microservice, execute:
 ```
@@ -125,8 +125,8 @@ cd oee-simulators/simulators
 docker build -t oee-simulators .
 docker save -o image.tar oee-simulators
 ```
-In [cumulocity.json](cumulocity.json), change "version" from "@project.version@" to version number you want in format xx.xx.xx (example: "version": "12.20.11"). If you want to use the same version for multiple uploads, "latest" can be used in the last position (example: "version": "12.20.latest").
-Then compress both the [cumulocity.json] and the newly created [image.tar] files into a ZIP file or execute the command below to create [oee-simulators.zip] file:
+In [cumulocity.json](cumulocity.json), change "version" from "@project.version@" to version number you want in format xx.xx.xx (example: "version": "12.20.11"). If you want to use the same version for multiple uploads, "latest" or "SNAPSHOT" can be used in the last position (example: "version": "12.20.latest").
+Then compress both the [cumulocity.json](cumulocity.json) and the newly created [image.tar] files into a ZIP file or execute the command below to create [oee-simulators.zip] file:
 ```
 zip oee-simulators.zip image.tar cumulocity.json 
 ```
@@ -134,7 +134,7 @@ This zip file can then be uploaded as a Microservice to Cumulocity IoT.
 
 ### Deployment
 
-To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [releases](https://github.com/SoftwareAG/oee-simulators/releases) section.
+To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [Releases](https://github.com/SoftwareAG/oee-simulators/releases) section.
 
 ### Environment
 
@@ -143,8 +143,7 @@ Install python 3.8.3+ on your system. Probably you'll need install some packages
 pip install requests
 ```
 
-To run the scripts the following environment variables need to be set in [cumulocityAPI.py](main/cumulocityAPI.py):
-
+To run the scripts locally the following variables need to be set as environment variables or in [cumulocityAPI.py](main/cumulocityAPI.py):
 ```
 C8Y_BASEURL=https://test.development.c8y.io 
 C8Y_TENANT=t123
@@ -152,7 +151,7 @@ C8Y_USER=yourusername
 C8Y_PASSWORD=yourpassword
 ```
 
-Additionally the following optional/debug variables can be set:
+Additionally, the following optional/debug variables can be set:
 ```
 MOCK_C8Y_REQUESTS=false
 ```

@@ -1,11 +1,11 @@
 # Generic scripts information
 This scripts folder contains:
-- The [Export Script](./ExportData.py) can be used to export a json file for any managed object. This json file can then be used for the import.
+- The [Export Script](./ExportData.py) can be used to export a json file for measurements and/or alarms of a device. This json file can then be used later for the import.
 - The [Environment File](./Environment.py) is used to set up environment parameters.
 - The [Import Script](./ImportData.py) can be used to import alarms and measurements into Cumulocity IoT.
 
 ## Setup environment parameters:
-Input necessary configuration in **Environment.py** file\
+Enter necessary configuration in **Environment.py** file\
 Credentials:
 - base url
 - tenant ID 
@@ -25,7 +25,7 @@ Notice:
 - if you would like to export all data from every child devices, set **'device id'** to **None**
 
 ## Install cumulocity-python-api package
-Follow the instructions in: https://github.com/SoftwareAG/cumulocity-python-api
+Follow the instructions in: https://github.com/Cumulocity-IoT/cumulocity-python-api
 
 ### Installation from PyPI
 ```shell
