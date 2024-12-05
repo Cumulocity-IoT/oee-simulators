@@ -62,7 +62,7 @@ The simulators will create machines sending events required to configure Cumuloc
 - **Quality**: the simulator produces a `Pieces_Ok` event. It contains fields named `piecesMinimumPerProduction` and `piecesMaximumPerProduction` with value 5. Those events follow a few seconds after a corresponding `Pieces_Produced` event (both events have the same timestamp). The summary amount of quality pieces is also 300 per hour, which results in a quality of 100%.  
 
 ### Measurements simulators
-The simulators will create machines sending measurements to Cumulocity IoT OEE app.
+The simulators will create machines sending measurements to Cumulocity IoT devices which can be used in the OEE block.
 
 #### 16. Measurement Simulator #1
 - **Pressure**: \

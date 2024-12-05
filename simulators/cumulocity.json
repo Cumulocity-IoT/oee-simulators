@@ -2,8 +2,8 @@
 	"apiVersion": "2",
 	"version": "@project.version@",
 	"provider": {
-  		"name": "IoT & Analytics Mobile Accelerators (oee-simulators)",
-		"support":"iot-analytics-mobile-accelerator@softwareag.com"
+  		"name": "DT2A team (oee-simulators)",
+		"support":"T-RnD-DT2A-green@cumulocity.com"
 	},
 	"isolation": "PER_TENANT",
 	"requiredRoles": [

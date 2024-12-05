@@ -120,7 +120,7 @@ Example for a simulator definition:
 
 To build the docker image for this microservice, execute:
 ```
-git clone git@github.softwareag.com:IOTA/oee-simulators.git
+git clone https://github.com/Cumulocity-IoT/oee-simulators.git
 cd oee-simulators/simulators
 docker build -t oee-simulators .
 docker save -o image.tar oee-simulators
@@ -134,7 +134,7 @@ This zip file can then be uploaded as a Microservice to Cumulocity IoT.
 
 ### Deployment
 
-To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [Releases](https://github.com/SoftwareAG/oee-simulators/releases) section.
+To deploy this project, upload the zip file to the Cumulocity as Microservice. The zip file can be created locally as described above or downloaded from the [Releases](https://github.com/Cumulocity-IoT/oee-simulators/releases) section.
 
 ### Environment
 

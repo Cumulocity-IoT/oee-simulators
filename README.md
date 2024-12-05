@@ -4,7 +4,7 @@ Collection of simulators available for [Cumulocity IoT OEE block](https://github
 
 [Generic Simulators](simulators) are the simulators can be used for testing and demoing the Cumulocity IoT OEE block. The simulators have been designed and configured to simulate commonly seen machine types. A detailed description of the [supported machine types](simulators/simulators.md) can be found in the [simulators](simulators) folder.
 
-The prebuilt docker images can be downloaded from the [Releases](https://github.softwareag.com/IOTA/oee-simulators/releases) in this repository.
+The prebuilt docker images can be downloaded from the [Releases](https://github.com/Cumulocity-IoT/oee-simulators/releases) in this repository.
 
 # Tests 
 Collection of test for the [Generic Simulators](simulators)
