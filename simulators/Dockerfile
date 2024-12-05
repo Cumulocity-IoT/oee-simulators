@@ -9,7 +9,4 @@ WORKDIR /home/appuser
 
 USER appuser
 
-ARG ARG_CREATE_PROFILES
-ENV CREATE_PROFILES ${ARG_CREATE_PROFILES:-false}
-
 CMD [ "python", "./simulator.py" ]

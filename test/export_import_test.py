@@ -4,7 +4,6 @@ import config.root # Configure root directories
 import simulators.extras.Environment as Ex_Im_Env
 
 from datetime import timezone, datetime, timedelta
-from simulators.main.oeeAPI import ProfileCreateMode, OeeAPI
 from simulators.main.cumulocityAPI import CumulocityAPI, C8Y_USER, C8Y_PASSWORD, C8Y_TENANT, C8Y_BASEURL
 from unittest.mock import patch
 from subprocess import call
@@ -17,15 +16,9 @@ logging.basicConfig(format='%(asctime)s %(name)s:%(message)s', level=logging.DEB
 
 class Test(unittest.TestCase):
     def setUp(self):
-        self.oee_api = OeeAPI()
         self.cumulocity_api = CumulocityAPI()
         # Get Tenant Options and configure Simulator
         self.MICROSERVICE_OPTIONS = self.cumulocity_api.get_tenant_option_by_category("simulators")
-        self.PROFILE_CREATE_MODE = ProfileCreateMode[self.MICROSERVICE_OPTIONS.get("CREATE_PROFILES", "CREATE_IF_NOT_EXISTS")]
-        self.CREATE_PROFILES_ARGUMENTS = self.MICROSERVICE_OPTIONS.get("CREATE_PROFILES_ARGUMENTS", "")
-        self.CREATE_ASSET_HIERARCHY = self.MICROSERVICE_OPTIONS.get("CREATE_ASSET_HIERARCHY", "False")
-        self.REPLACE_EXISTING_TIMESLOTS = self.MICROSERVICE_OPTIONS.get("REPLACE_EXISTING_TIMESLOTS", "False")
-        self.DELETE_PROFILES = self.MICROSERVICE_OPTIONS.get("DELETE_PROFILES", "False")
         self.device_model = {
             "type": "Simulator",
             "id": "sim_001_test",
@@ -34,7 +27,7 @@ class Test(unittest.TestCase):
         }
 
     @patch('logging.Logger.error')
-    def test_export_import_profile_data(self, mock_error):
+    def test_export_import_data(self, mock_error):
         # Get current working directory
         current_dir = os.getcwd()
         # Extracts the base name of the current directory
@@ -44,13 +37,14 @@ class Test(unittest.TestCase):
             os.chdir("test")
 
         try:
-            # Create new simulator and oee profile
+            # Create new simulator
             Utils.setup_model(self)
             device_id = Utils.create_device(self.device_model_with_events)
             external_device_id = self.device_model_with_events.get('id')
-            profile_id = self.oee_api.create_and_activate_profile(external_id=external_device_id).get('id')
-            filename = f"{external_device_id}_profile"
-            data_file_path = f"export_data/{filename}.json"
+            filename = f"{external_device_id}"
+            data_file_path = f"export_data/{external_device_id}.json"
+
+            self.assertTrue(os.path.exists(data_file_path), msg=f"Sample data file {filename}.json does not exist!")
 
             log.info('*' * 100)
             log.info("Importing data")
@@ -85,12 +79,13 @@ class Test(unittest.TestCase):
 
             # Change work dir to extras
             Utilities.change_working_dir_between_extras_and_test()
-            # Run the ExportProfileData.py script
-            call(["python", "ExportProfileData.py", "--device-ids", f"{profile_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
+            # Run the ExportData.py script
+            call(["python", "ExportData.py", "--device-ids", f"{device_id}", "--username", f"{C8Y_USER}", "--password", f"{C8Y_PASSWORD}", "--tenant-id", f"{C8Y_TENANT}", "--baseurl", f"{C8Y_BASEURL}", "--test"])
 
             # Change work dir to test dir
             Utilities.change_working_dir_between_extras_and_test()
-            # Check if the sim_001_test_profile.json is created
+            # Check if the sim_001_test.json is created
+            log.info(f"Checking if {os.path.abspath(data_file_path)} is created...")
             self.assertTrue(os.path.exists(data_file_path), msg=f"{filename}.json not found")
 
             # Open the JSON file and load its contents
@@ -101,8 +96,8 @@ class Test(unittest.TestCase):
         finally:
             # Change back to the original working directory
             os.chdir(current_dir)
-            # Delete test device and profile
-            Utils.delete_oee_profile_and_device(self=self, profile_id=profile_id, device_id=device_id)
+            # Delete test device
+            Utils.delete_device(self=self, device_id=device_id)
 
 class Utilities:
     @staticmethod
@@ -129,15 +124,6 @@ class Utilities:
         date_to = datetime_to_string(date_to)
 
         return date_from, date_to
-    @staticmethod
-    def change_working_dir_between_extras_and_test():
-        base_dir = os.path.basename(os.getcwd())
-        # If the working directory is test then change to extras
-        if base_dir == "test":
-            os.chdir("../simulators/extras")
-        elif base_dir == "extras":
-            os.chdir("../../test")
-
     @staticmethod
     def change_working_dir_between_extras_and_test():
         base_dir = os.path.basename(os.getcwd())

@@ -21,7 +21,7 @@ on:
       environment:
         type: environment
         description: Name of the environment to use
-        default: "oee-dev"
+        default: "test"
         required: true
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
       release_version: ${{ steps.update-version-number.outputs.release_version }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: 'repo'
 
@@ -59,7 +59,7 @@ jobs:
           docker rmi oee-simulators
 
       - name: Upload file and zip an artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v4
         with:
           name: 'oee-simulators'
           path: |

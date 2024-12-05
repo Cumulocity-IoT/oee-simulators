@@ -13,7 +13,7 @@ on:
       environment:
         type: environment
         description: Name of the environment to use
-        default: "oee-dev"
+        default: "test"
         required: true
 
 jobs:
@@ -30,12 +30,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: 'repo'
 
       - name: Download artifact
-        uses: actions/download-artifact@v3.0.2
+        uses: actions/download-artifact@v4
         with:
           name: 'oee-simulators'
           path: 'repo/simulators'
@@ -55,7 +55,7 @@ jobs:
           zip oee-simulators.zip image.tar cumulocity.json
 
       - name: Create Release
-        uses: actions/create-release@v1.1.4
+        uses: actions/create-release@v1
         id: create_release
         with:
           draft: false
@@ -67,7 +67,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
 
       - name: Upload oee-sim zip
-        uses: actions/upload-release-asset@v1.0.2
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:

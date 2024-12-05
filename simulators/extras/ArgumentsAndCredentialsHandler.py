@@ -42,7 +42,7 @@ def SetupLogger(console_logger_name, console_log_level):
 
 
 def HandleExportArguments():
-    parser = argparse.ArgumentParser(description='Script to export or import profiles data')
+    parser = argparse.ArgumentParser(description='Script to export or import data')
     export_arg = parser.add_argument_group('Import')
     export_arg.add_argument('--device-ids', '-i', type=str, help='Input device id / List of device ids', nargs='+')
     export_arg.add_argument('--create-from', '-from', type=str, help='Input "create from" milestone')
@@ -118,7 +118,7 @@ def HandleExportArguments():
 
 
 def HandleImportArguments():
-    parser = argparse.ArgumentParser(description='Script to import profiles data')
+    parser = argparse.ArgumentParser(description='Script to import data')
 
     import_arg = parser.add_argument_group('Import')
     import_arg.add_argument('--ifiles', '-i', type=str, help='Input file', nargs='+')
